@@ -1,0 +1,23 @@
+version: 1
+
+formatters:
+    custom_format:
+        format: "%(levelname)-8s|%(asctime)s | %(message)s"
+        datefmt: '%H:%M:%S'
+    colored_formatter:
+        class: "colorlog.ColoredFormatter"
+        format: "%(log_color)s%(levelname)-7s%(reset)s | %(black)s%(asctime)s | %(message)s"
+        datefmt: '%H:%M:%S'
+
+handlers:
+    console:
+        class: logging.StreamHandler
+        formatter: colored_formatter
+
+loggers:
+    '':
+        handlers: [console]
+        level: INFO
+    markone:
+        handlers: [console]
+        level: DEBUG
