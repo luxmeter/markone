@@ -5,11 +5,12 @@ import logging
 
 
 log = logging.getLogger('markone.FileSystemEventHandler')
-class FileSystemEventHandler(watchdog.events.FileSystemEventHandler):
+class MarkdownTransformer(watchdog.events.FileSystemEventHandler):
 
-    def __init__(self, socketio) -> None:
+    def __init__(self, socketio, output_path) -> None:
         super().__init__()
         self.socketio = socketio
+        self.output_path = output_path
 
     def on_modified(self, event):
         log.info("event: " + str(event))
