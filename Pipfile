@@ -11,6 +11,7 @@ Pygments = "*"
 Markdown = "*"
 watchdog = "*"
 colorlog = "*"
+arrow = "*"
 
 [dev-packages]
 

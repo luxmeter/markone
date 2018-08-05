@@ -1,29 +1,24 @@
 import json
-import logging
-import sys
+import logging.config
 import threading
-from collections import defaultdict
+import time
 from pathlib import Path
 
 import yaml
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-import time
 from watchdog.observers import Observer
 
 from markone.eventhandler import MarkdownTransformer
-import logging.config
-
 
 app = Flask(__name__, template_folder='templates')
 socketio = SocketIO(app)
-log = logging.getLogger('markone.app')
 
 
 @app.route('/')
 def hello_world():
     context = {
-        'md_path':  app.config['MD_PATH'],
+        'md_path': app.config['MD_PATH'],
         'output_path': app.config['OUTPUT_PATH']
     }
     return render_template('index.html', **context)
@@ -49,10 +44,21 @@ def create_tree(root):
     tree = []
     for path in root.iterdir():
         if path.is_dir():
-            tree.append({'text': path.name, 'children': create_tree(path), 'node_type': 'child' })
+            tree.append({'text': path.name, 'children': create_tree(path), 'node_type': 'child'})
         else:
-            tree.append({'text': path.name, 'icon' : 'jstree-file', 'node_type': 'leaf'})
+            tree.append({'text': path.name, 'icon': 'jstree-file', 'node_type': 'leaf'})
     return tree
+
+
+@app.before_first_request
+def before_first_request():
+    context = {
+        'md_path': app.config['MD_PATH'],
+        'output_path': app.config['OUTPUT_PATH']
+    }
+    watchdog_thread = threading.Thread(name="watchdog", target=watch, kwargs=context)
+    watchdog_thread.setDaemon(True)
+    watchdog_thread.start()
 
 
 def watch(md_path, output_path):
@@ -67,7 +73,8 @@ def watch(md_path, output_path):
     observer.join()
 
 
-if __name__ == '__main__':
+def main():
+    app.logger.handlers.clear()
     with open('logging.yaml', 'r') as f:
         conf = yaml.load(f)
     logging.config.dictConfig(conf)
@@ -77,13 +84,8 @@ if __name__ == '__main__':
     config['OUTPUT_PATH'] = Path('./example/html').absolute()
     app.config.from_mapping(config)
 
-    context = {
-        'md_path':  app.config['MD_PATH'],
-        'output_path': app.config['OUTPUT_PATH']
-    }
-
-    watchdog_thread = threading.Thread(name="watchdog", target=watch, kwargs=context)
-    watchdog_thread.setDaemon(True)
-    watchdog_thread.start()
     socketio.run(app, debug=True)
 
+
+if __name__ == '__main__':
+    main()
