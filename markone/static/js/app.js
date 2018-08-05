@@ -1,11 +1,11 @@
-var markone = {}
-markone['main'] = function(){
+var markone = function(){
     var host='localhost:5000'
     var socket = io.connect(host);
     socket.on('connect', function() {
         console.log('connected to ' + host)
-        socket.on('messages', function (data) {
-            console.log('data:', data);
+        socket.on('update_index', function (data) {
+            $('#container').jstree(true).settings.core.data = data;
+            $('#container').jstree(true).refresh();
         })
     });
     $('#container')
@@ -16,7 +16,7 @@ markone['main'] = function(){
         type = node.original.node_type
         if (type === 'leaf') {
             parent_path = node.parents.map(n => $(this).jstree(true).get_node(n).text).reverse().join('/')
-            window.open('/watch'+parent_path+'/'+name, '_self')
+            window.open(parent_path+'/'+name, '_self')
         }
     })
     .jstree({
@@ -33,6 +33,11 @@ markone['main'] = function(){
             }
         }
     });
+
+    makeTablesPrettyAgain = function () {
+        document.querySelectorAll('table').forEach(table => table.className = 'table table-striped')
+    }
+    makeTablesPrettyAgain();
 }
 
-window.onload = markone.main
+window.onload = markone
