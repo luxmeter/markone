@@ -1,21 +1,18 @@
 import json
 import logging.config
+import os
 import shutil
 import threading
 import time
 from pathlib import Path
 
-import jinja2
-import markdown
-import pkg_resources
 import yaml
 from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 from watchdog.observers import Observer
 
+from markone import util
 from markone.eventhandler import MarkdownTransformer
-
-template = pkg_resources.resource_string('markone', '/'.join(('templates', 'watch.html'))).decode('utf-8')
 
 app = Flask(__name__, template_folder='templates')
 socketio = SocketIO(app)
@@ -32,7 +29,7 @@ def index():
 
 @app.route('/tree')
 def tree():
-    tree = create_tree(app.config['OUTPUT_PATH'])
+    tree = util.create_tree(app.config['OUTPUT_PATH'])
     return json.dumps(tree)
 
 
@@ -49,16 +46,6 @@ def watch(subpath):
     return 'File does not exist :(', 404
 
 
-def create_tree(root):
-    tree = []
-    for path in root.iterdir():
-        if path.is_dir():
-            tree.append({'text': path.name, 'children': create_tree(path), 'node_type': 'child'})
-        else:
-            tree.append({'text': path.name, 'icon': 'jstree-file', 'node_type': 'leaf'})
-    return tree
-
-
 @app.before_first_request
 def before_first_request():
     context = {
@@ -71,9 +58,11 @@ def before_first_request():
 
 
 def watch(md_path, output_path):
+    event_handler = MarkdownTransformer(socketio, md_path, output_path)
     observer = Observer()
-    observer.schedule(MarkdownTransformer(socketio, output_path), str(md_path), recursive=True)
+    observer.schedule(event_handler, str(md_path), recursive=True)
     observer.start()
+
     try:
         while True:
             time.sleep(1)
@@ -83,38 +72,8 @@ def watch(md_path, output_path):
 
 
 def setup(src_dir: Path, output_dir):
-    shutil.rmtree(output_dir, ignore_errors=True)
-    gen_output(src_dir, src_dir, output_dir)
-
-
-def gen_output(root, src_dir, output_dir):
-    for input_path in src_dir.iterdir():
-        if any(pattern in str(input_path.absolute()) for pattern in ['.DS_Store', '.git']):
-            continue
-        if input_path.is_dir():
-            gen_output(root, input_path, output_dir)
-            continue
-
-        relative_path = input_path.relative_to(root)
-        if relative_path.suffix == '.md':
-            output_path = output_dir / relative_path.parent / (relative_path.stem + '.html')
-        else:
-            output_path = output_dir / relative_path.parent / relative_path.name
-
-        if not output_path.parent.is_dir():
-            output_path.parent.mkdir(parents=True)
-
-        if relative_path.suffix == '.md':
-            with open(input_path) as file:
-                md_code = file.read()
-                content = markdown.markdown(md_code,
-                                            extensions=["codehilite", "extra", "smarty"],
-                                            output_format="html5")
-                html = jinja2.Template(template).render(content=content)
-                output_file = open(output_path, "w", encoding="utf-8")
-                output_file.write(html)
-        else:
-            output_path.symlink_to(input_path)
+    shutil.rmtree(app.config['OUTPUT_PATH'], ignore_errors=True)
+    util.gen_output(src_dir, src_dir, output_dir)
 
 
 def main():
@@ -124,8 +83,12 @@ def main():
     logging.config.dictConfig(conf)
 
     config = dict()
-    config['MD_PATH'] = Path('./example/markdown').absolute()
-    config['OUTPUT_PATH'] = Path('./example/html').absolute()
+    config['MD_PATH'] = (Path('./example/markdown').absolute()
+                         if not os.getenv('MARKONE_MD_PATH')
+                         else Path(os.getenv('MARKONE_MD_PATH')))
+    config['OUTPUT_PATH'] = (Path('./example/html').absolute()
+                             if not os.getenv('MARKONE_OUTPUT_PATH')
+                             else Path(os.getenv('MARKONE_OUTPUT_PATH')))
     app.config.from_mapping(config)
 
     setup(config['MD_PATH'], config['OUTPUT_PATH'])

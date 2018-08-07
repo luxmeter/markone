@@ -3,9 +3,16 @@ var markone = function(){
     var socket = io.connect(host);
     socket.on('connect', function() {
         console.log('connected to ' + host)
-        socket.on('update_index', function (data) {
-            $('#container').jstree(true).settings.core.data = data;
-            $('#container').jstree(true).refresh();
+        if ($('#container').length > 0) {
+            socket.on('update_index', function (data) {
+                $('#container').jstree(true).settings.core.data = data;
+                $('#container').jstree(true).refresh(false, true);
+                console.log('received update_index data:' + data)
+            })
+        }
+        socket.on('update_open_file', function (data) {
+            location.reload()
+            console.log('received update_open_file data:' + data)
         })
     });
     $('#container')
@@ -26,7 +33,7 @@ var markone = function(){
                 var self = this
                 $.getJSON('/tree', function(data, status) {
                     if (status === 'success') {
-                        console.log(data)
+                        console.log('received data:' + data)
                         callback.call(self, data);
                     }
                 })
