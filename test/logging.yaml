@@ -1,0 +1,21 @@
+version: 1
+
+formatters:
+  colored_formatter:
+    class: "colorlog.ColoredFormatter"
+    format: "%(log_color)s%(levelname)-7s%(reset)s | %(black)s%(asctime)s | %(threadName)s | %(name)s | %(message)s"
+    datefmt: '%H:%M:%S'
+
+handlers:
+  file:
+    class: logging.FileHandler
+    formatter: colored_formatter
+    filename: 'test.log'
+    mode: 'w'
+  console:
+    class: logging.StreamHandler
+    formatter: colored_formatter
+
+root:
+  handlers: [file]
+  level: DEBUG
