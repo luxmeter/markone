@@ -1,14 +1,17 @@
 import logging
 import shutil
 
-import jinja2
 import markdown
 import pkg_resources
+from jinja2 import Environment, PackageLoader
 
 from markone.app import app
 
 log = logging.getLogger('markone.logic')
 template = pkg_resources.resource_string('markone', '/'.join(('templates', 'watch.html'))).decode('utf-8')
+env = Environment(
+    loader=PackageLoader('markone', 'templates'),
+)
 
 
 def gen_html_and_send_update(event, socketio):
@@ -43,7 +46,7 @@ def gen_output(root, src_dir, output_dir):
                 content = markdown.markdown(md_code,
                                             extensions=["codehilite", "extra", "smarty"],
                                             output_format="html5")
-                html = jinja2.Template(template).render(content=content)
+                html = env.get_template('watch.html').render(content=content)
                 output_file = open(output_path, "w", encoding="utf-8")
                 output_file.write(html)
         else:

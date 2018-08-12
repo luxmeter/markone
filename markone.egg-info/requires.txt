@@ -1,9 +1,0 @@
-flask
-flask-socketio
-Pygments
-Jinja2
-Markdown
-watchdog
-colorlog
-arrow
-eventlet

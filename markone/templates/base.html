@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% block head %}
+    <title>{% block title %}MarkOne{% endblock %}</title>
+    <meta charset="utf-8"/>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/jstree-3.2.1.min.js"></script>
+    <script src="/static/js/socket.io-1.3.6.min.js"></script>
+    <script src="/static/js/app.js"></script>
+    <link rel="stylesheet" href="/static/css/jstree-3.2.1.min.css"/>
+    <link href="/static/css/codehilite.css" rel="stylesheet">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    {% endblock %}
+</head>
+<body>
+{% block content %}
+{% endblock %}
+</body>
+</html>

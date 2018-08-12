@@ -2,7 +2,6 @@ import os
 import shutil
 from pathlib import Path
 
-from markone.app import socketio
 from markone.views import *
 
 config = dict()
