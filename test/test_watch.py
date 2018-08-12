@@ -1,22 +1,17 @@
 import logging
 import os
 import shutil
-import time
 from collections import Counter
 from pathlib import Path
 
 import arrow
-
-from markone.watch import Watch
-from . import context
-
 import pytest
 
-# from .context import markone
-from markone import watch
-
+from markone.watch import Watch
 from test import utils
+from .context import configure_logger
 
+configure_logger()
 log = logging.getLogger(__name__)
 
 
@@ -49,7 +44,7 @@ def test_file_updated(dir):
     os.utime(path, (t, t))
 
     spider = Watch(dir, delay=0.5)
-    spider.watch(observer)
+    spider.observe(observer)
 
     # time.sleep(1)
     path = (dir / 'test-file.txt')
@@ -76,7 +71,7 @@ def test_file_removed(dir):
     (dir / 'test-file.txt').touch()
 
     spider = Watch(dir, delay=0.5)
-    spider.watch(observer)
+    spider.observe(observer)
 
     (dir / 'test-file.txt').unlink()
 
@@ -99,7 +94,7 @@ def test_file_added(dir):
         })
 
     spider = Watch(dir, delay=0.5)
-    spider.watch(observer)
+    spider.observe(observer)
 
     (dir / 'test-file.txt').touch()
 

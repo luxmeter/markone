@@ -6,3 +6,4 @@ Markdown
 watchdog
 colorlog
 arrow
+eventlet
