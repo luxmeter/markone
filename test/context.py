@@ -1,10 +1,12 @@
 import logging.config
-import os
+from pathlib import Path
 
 import yaml
 
 
 def configure_logger():
-    with open(os.path.join(os.path.dirname(__file__), 'logging.yaml'), 'r') as f:
-        conf = yaml.load(f)
-    logging.config.dictConfig(conf)
+    path = (Path(__file__).parent / 'logging.yaml')
+    if path:
+        with open(path, 'r') as f:
+            conf = yaml.load(f)
+        logging.config.dictConfig(conf)

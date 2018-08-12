@@ -1,6 +1,7 @@
 import logging.config
 
 import eventlet
+import pkg_resources
 import yaml
 
 eventlet.monkey_patch()
@@ -12,6 +13,6 @@ app = Flask(__name__, template_folder='templates')
 socketio = SocketIO(app)
 
 app.logger.handlers.clear()
-with open('logging.yaml', 'r') as f:
-    conf = yaml.load(f)
+f = pkg_resources.resource_string('markone', 'logging.yaml').decode('utf-8')
+conf = yaml.load(f)
 logging.config.dictConfig(conf)
