@@ -7,13 +7,14 @@ def log():
     def deco_log(f):
         @wraps(f)
         def f_log(*args, **kwargs):
-            logging.debug(f'Start: {f.__name__}')
+            log = logging.getLogger(f.__module__)
+            log.debug(f'Start: {f.__name__}')
             try:
                 result = f(*args, **kwargs)
             except Exception as e:
-                logging.debug(f'Ended with exception: {f.__name__}')
+                log.debug(f'Ended with exception: {f.__name__}')
                 raise e
-            logging.debug(f'End: {f.__name__}')
+            log.debug(f'End: {f.__name__}')
             return result
 
         return f_log

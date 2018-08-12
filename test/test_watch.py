@@ -8,7 +8,7 @@ import arrow
 import pytest
 
 from markone.watch import Watch
-from test import utils
+from test import util
 from .context import configure_logger
 
 configure_logger()
@@ -26,12 +26,12 @@ def dir():
         shutil.rmtree(dir)
 
 
-@utils.log()
+@util.log()
 def test_file_updated(dir):
     counter = Counter()
 
     def observer(update, counter=counter):
-        logging.debug(f'Received event: {update}')
+        log.debug(f'Received event: {update}')
         counter.update({
             'added_files': len(update['added_files']),
             'removed_files': len(update['removed_files']),
@@ -56,12 +56,12 @@ def test_file_updated(dir):
         spider.stop()
 
 
-@utils.log()
+@util.log()
 def test_file_removed(dir):
     counter = Counter()
 
     def observer(update, counter=counter):
-        logging.debug(f'Received event: {update}')
+        log.debug(f'Received event: {update}')
         counter.update({
             'added_files': len(update['added_files']),
             'removed_files': len(update['removed_files']),
@@ -81,12 +81,12 @@ def test_file_removed(dir):
         spider.stop()
 
 
-@utils.log()
+@util.log()
 def test_file_added(dir):
     counter = Counter()
 
     def observer(update, counter=counter):
-        logging.debug(f'Received event: {update}')
+        log.debug(f'Received event: {update}')
         counter.update({
             'added_files': len(update['added_files']),
             'removed_files': len(update['removed_files']),
@@ -104,7 +104,7 @@ def test_file_added(dir):
         spider.stop()
 
 
-@utils.retry(AssertionError, tries=3, delay=1)
+@util.retry(AssertionError, tries=3, delay=1)
 def was_triggered(counter, files_added=None, files_removed=None, files_updated=None):
     if files_added:
         assert counter['added_files'] == files_added

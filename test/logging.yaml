@@ -3,7 +3,7 @@ version: 1
 formatters:
   colored_formatter:
     class: "colorlog.ColoredFormatter"
-    format: "%(log_color)s%(levelname)-7s%(reset)s | %(black)s%(asctime)s | %(threadName)s | %(name)s | %(message)s"
+    format: "%(log_color)s%(levelname)-7s%(reset)s | %(black)s%(asctime)s | %(threadName)-10s | %(name)s | %(message)s"
     datefmt: '%H:%M:%S'
 
 handlers:

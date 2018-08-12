@@ -1,8 +1,23 @@
+import logging
+import shutil
+
 import jinja2
 import markdown
 import pkg_resources
 
+from markone.app import app
+
+log = logging.getLogger('markone.logic')
 template = pkg_resources.resource_string('markone', '/'.join(('templates', 'watch.html'))).decode('utf-8')
+
+
+def gen_html_and_send_update(event, socketio):
+    log.debug(f'directory was updated: {event}')
+    shutil.rmtree(app.config['OUTPUT_PATH'], ignore_errors=True)
+    gen_output(app.config['MD_PATH'], app.config['MD_PATH'], app.config['OUTPUT_PATH'])
+    data = create_tree(app.config['OUTPUT_PATH'])
+    socketio.emit('update_index', data)
+    socketio.emit('update_open_file', data)
 
 
 def gen_output(root, src_dir, output_dir):

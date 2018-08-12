@@ -14,7 +14,7 @@ class Watch:
     def stop(self):
         self._stop = True
 
-    def _observe(self, dir, observer, delay, last_tree):
+    def _observe(self, observer, observer_args, dir, delay, last_tree):
         def missing_files(last_tree, cur_tree):
             missing = []
             for path in cur_tree:
@@ -40,7 +40,7 @@ class Watch:
                     'added_files': added_files,
                     'removed_files': removed_files,
                     'updated_files': updated_files
-                })
+                }, *observer_args[0], **observer_args[1])
             last_tree = cur_tree
             time.sleep(delay)
 
@@ -51,14 +51,14 @@ class Watch:
                 cur_tree[path] = arrow.get(path.stat().st_mtime)
         return cur_tree
 
-    def observe(self, observer):
+    def observe(self, observer, *args, **kwargs):
         if self._thread:
             raise RuntimeError('Already watching')
 
         # need to generate the tree in main thread
         # in order to observe immediate updates
         last_tree = self.generate_tree(self._dir)
-        thread = threading.Thread(name="Spider", target=self._observe,
-                                  args=(self._dir, observer, self._delay, last_tree))
+        thread = threading.Thread(name="Watch", target=self._observe,
+                                  args=(observer, (args, kwargs), self._dir, self._delay, last_tree))
         thread.daemon = True
         thread.start()
