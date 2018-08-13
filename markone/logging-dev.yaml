@@ -13,6 +13,12 @@ handlers:
     class: logging.StreamHandler
     formatter: colored_formatter
 
+loggers:
+  markone:
+    handlers: [console]
+    level: DEBUG
+    propagate: no
+
 root:
   handlers: [console]
   level: INFO

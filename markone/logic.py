@@ -21,6 +21,7 @@ def gen_html_and_send_update(event, socketio):
     data = create_tree(app.config['OUTPUT_PATH'])
     socketio.emit('update_index', data)
     socketio.emit('update_open_file', data)
+    log.info(f'directory change detected; updates sent to client')
 
 
 def gen_output(root, src_dir, output_dir):

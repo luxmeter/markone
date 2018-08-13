@@ -27,15 +27,17 @@ Afterwards you can install the app from source code:
 
 ## Usage
 
-Markone is a flask app that expect you to specify two environment variables:
+Markone is a flask app that expect you to specify following environment variables:
 
 * **MARKONE_MD_PATH**: Path to the markdown files
 * **MARKONE_OUTPUT_PATH**: Path in which the rendered HTML files will be generated to
+* **MARKONE_OUTPUT_PATH** (optional): Port to listen to
 
 Here is an execution example:
 
-    MARKONE_MD_PATH=~/notes/markdown \
-    MARKONE_OUTPUT_PATH=~/notes/html \
+    MARKONE_MD_PATH=./example/markdown \
+    MARKONE_OUTPUT_PATH=./example/html \
+    MARKONE_PORT=5000 \
     FLASK_APP=markone.main \
     flask run
     

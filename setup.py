@@ -22,7 +22,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-__version__ = '0.0.1'
+__version__ = '0.0.3'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -57,7 +57,7 @@ setup(
             "static/**/*",
             "templates/*",
             "templates/**/*",
-            "logging.yaml",
+            "*.yaml",
         ]},
     test_suite='tests',
     tests_require=test_requirements,

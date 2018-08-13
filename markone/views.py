@@ -2,23 +2,26 @@ import json
 
 from flask import render_template, send_from_directory
 
-from markone import logic
+from markone import logic, log_api
 from markone.app import app, socketio
 from markone.watch import Watch
 
 
 @app.route('/')
+@log_api()
 def index():
     return render_template('index.html')
 
 
 @app.route('/tree')
+@log_api()
 def tree():
     tree = logic.create_tree(app.config['OUTPUT_PATH'])
     return json.dumps(tree)
 
 
 @app.route('/<path:subpath>')
+@log_api()
 def watch(subpath):
     if not subpath.endswith('.html'):
         return send_from_directory(app.config['OUTPUT_PATH'], subpath)

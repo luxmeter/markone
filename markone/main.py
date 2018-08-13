@@ -1,8 +1,11 @@
+import logging
 import os
 import shutil
 from pathlib import Path
 
 from markone.views import *
+
+log = logging.getLogger('markone')
 
 config = dict()
 config['MD_PATH'] = (Path('./example/markdown').absolute()
@@ -17,4 +20,6 @@ shutil.rmtree(app.config['OUTPUT_PATH'], ignore_errors=True)
 logic.gen_output(app.config['MD_PATH'], app.config['MD_PATH'], app.config['OUTPUT_PATH'])
 
 if __name__ == '__main__':
-    socketio.run(app)
+    port = os.getenv('MARKONE_PORT', 5000)
+    log.info(f'App started and listens on http://localhost:{port}')
+    socketio.run(app, port=port)
