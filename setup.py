@@ -1,8 +1,10 @@
 import sys
+
 from os import path
 
-from pipenv.project import Project
 from pipenv.utils import convert_deps_to_pip
+from pipenv.project import Project
+
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
@@ -22,7 +24,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-__version__ = '0.0.3'
+__version__ = '0.0.4'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -43,7 +45,7 @@ setup(
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
     ],
-    description='Local web app to render your markdown files.',
+    description='Local web app rendering your markdown files live',
     include_package_data=True,
     install_requires=requirements,
     keywords='flask web-app markdown renderer html',

@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+import sys
 from pathlib import Path
 
 from markone.views import *
@@ -14,6 +15,12 @@ config['MD_PATH'] = (Path('./example/markdown').absolute()
 config['OUTPUT_PATH'] = (Path('./example/html').absolute()
                          if not os.getenv('MARKONE_OUTPUT_PATH')
                          else Path(os.getenv('MARKONE_OUTPUT_PATH')))
+
+if (Path(config['OUTPUT_PATH']).absolute().parent == config['MD_PATH'].absolute()
+        or Path(config['MD_PATH']).absolute().parent == config['OUTPUT_PATH'].absolute()):
+    log.error("MARKONE_MD_PATH must not be parent of MARKONE_OUTPUT_PATH and vice versa")
+    sys.exit(1)
+
 app.config.from_mapping(config)
 
 shutil.rmtree(app.config['OUTPUT_PATH'], ignore_errors=True)

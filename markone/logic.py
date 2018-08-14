@@ -51,7 +51,7 @@ def gen_output(root, src_dir, output_dir):
                 output_file = open(output_path, "w", encoding="utf-8")
                 output_file.write(html)
         else:
-            output_path.symlink_to(input_path)
+            output_path.symlink_to(input_path.absolute())
 
 
 def create_tree(root):
