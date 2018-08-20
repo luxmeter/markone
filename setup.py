@@ -24,7 +24,7 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 
-__version__ = '0.0.4'
+__version__ = '0.0.5.dev0'
 
 here = path.abspath(path.dirname(__file__))
 

@@ -2,7 +2,7 @@ import json
 
 from flask import render_template, send_from_directory
 
-from markone import logic, log_api
+from markone import log_api, logic
 from markone.app import app, socketio
 from markone.watch import Watch
 
@@ -10,7 +10,8 @@ from markone.watch import Watch
 @app.route('/')
 @log_api()
 def index():
-    return render_template('index.html')
+    return render_template('index.html',
+                           md_path=app.config['MD_PATH'], output_path=app.config['OUTPUT_PATH'])
 
 
 @app.route('/tree')
