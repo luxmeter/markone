@@ -1,7 +1,8 @@
-import logging
 import os
-import shutil
 import sys
+import shutil
+import logging
+
 from pathlib import Path
 
 from markone.views import *
@@ -29,4 +30,4 @@ logic.gen_output(app.config['MD_PATH'], app.config['MD_PATH'], app.config['OUTPU
 if __name__ == '__main__':
     port = os.getenv('MARKONE_PORT', 5000)
     log.info(f'App started and listens on http://localhost:{port}')
-    socketio.run(app, port=port)
+    socketio.run(app, host='0.0.0.0', port=port)
